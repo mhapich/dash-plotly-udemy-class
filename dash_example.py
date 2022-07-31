@@ -16,9 +16,10 @@ app.layout=html.Div([
              html.A('World Happiness Report Data Source',
                      href='https://worldhappiness.report',
                      target='_blank')]),
-    dcc.Dropdown(id='country-dropdown',
-                 options=happiness['country'].unique(), 
-                 value='United States'),
+    dcc.RadioItems(id='region-radio',
+                    options=happiness['region'].unique(),
+                    value='North America'),
+    dcc.Dropdown(id='country-dropdown'),
     dcc.RadioItems(id='data-radio',
                    options={'happiness_score':'Happiness Score',
                             'happiness_rank':'Happiness Rank'},
@@ -27,6 +28,20 @@ app.layout=html.Div([
         id='happiness-graph'),
     html.Div(id='average-div')
     ])
+
+# to chain callbacks, we first let the radio button choice of region
+# set both the options and value for the country dropdown
+@app.callback(
+    Output('country-dropdown', 'options'),
+    Output('country-dropdown', 'value'),
+    Input('region-radio', 'value')
+)
+
+# this decorator needs its own function
+def update_dropdown(selected_region):
+    filtered_happiness=happiness[happiness['region']==selected_region]
+    country_list = filtered_happiness['country'].unique()
+    return country_list, country_list[0] 
 
 @app.callback(
     Output('happiness-graph', 'figure'),
