@@ -19,21 +19,26 @@ app.layout=html.Div([
     dcc.Dropdown(id='country-dropdown',
                  options=happiness['country'].unique(), 
                  value='United States'),
+    dcc.RadioItems(id='data-radio',
+                   options={'happiness_score':'Happiness Score',
+                            'happiness_rank':'Happiness Rank'},
+                   value='happiness_score'),
     dcc.Graph(
-        id='happiness-graph',
-        #figure = line_fig       # taking this out so it will update
-        )
+        id='happiness-graph')
     ])
 
 @app.callback(
-    Output(component_id='happiness-graph', component_property='figure'),
-    Input(component_id='country-dropdown', component_property='value')
+    Output('happiness-graph', 'figure'),
+    Input('country-dropdown', 'value'),
+    Input('data-radio', 'value')
 )
-def update_graph(selected_country):
+def update_graph(selected_country, selected_data):
     filtered_happiness = happiness[happiness['country'] == selected_country]
+    names_dict = {'happiness_score':'Happiness Score',
+                  'happiness_rank':'Happiness Rank'}
     line_fig = px.line(filtered_happiness, 
-                       x='year', y='happiness_score', 
-                       title=f'Happiness Score in {selected_country}')
+                       x='year', y=selected_data, 
+                       title=f'{names_dict.get(selected_data)} in {selected_country}').update_layout(yaxis_title=names_dict.get(selected_data))
     return line_fig
 
 if __name__=='__main__':
