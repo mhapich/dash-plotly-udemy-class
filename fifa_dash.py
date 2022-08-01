@@ -4,11 +4,12 @@ from distutils.log import debug
 import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, Input, Output, State
+import dash_bootstrap_components as dbc
 
 # import dataset
 fifa_df = pd.read_csv('fifa_soccer_players.csv')
 
-app = Dash()
+app = Dash(external_stylesheets=[dbc.themes.CYBORG])
 
 app.layout = html.Div([
     html.H1('Soccer Players Dashboard',
