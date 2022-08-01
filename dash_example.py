@@ -1,6 +1,6 @@
 from distutils.log import debug
 from turtle import title
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State
 import pandas as pd
 import plotly.express as px
 
@@ -24,6 +24,13 @@ app.layout=html.Div([
                    options={'happiness_score':'Happiness Score',
                             'happiness_rank':'Happiness Rank'},
                    value='happiness_score'),
+    # this is where input stops and output begins, 
+    # so we'll put the button here
+    html.Br(),     # line break to put button on a new line
+    html.Button(
+        id='submit-button',
+        n_clicks=0,
+        children='Update the output'),
     dcc.Graph(
         id='happiness-graph'),
     html.Div(id='average-div')
@@ -46,10 +53,18 @@ def update_dropdown(selected_region):
 @app.callback(
     Output('happiness-graph', 'figure'),
     Output('average-div', 'children'),
-    Input('country-dropdown', 'value'),
-    Input('data-radio', 'value')
+    # this is where to add the button input
+    # the first callback was okay as-is
+    Input('submit-button', 'n_clicks'),
+    # NOW, the following two inputs aren't anymore
+    # they hold values needed, but they can't trigger the function
+    # only the button click should trigger the function
+    State('country-dropdown', 'value'),
+    State('data-radio', 'value')
 )
-def update_graph(selected_country, selected_data):
+def update_graph(button_click, selected_country, selected_data):
+    # button_click just needs to be there to fire the function
+    # there will be no value used from it
     filtered_happiness = happiness[happiness['country'] == selected_country]
     names_dict = {'happiness_score':'Happiness Score',
                   'happiness_rank':'Happiness Rank'}
