@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, dash_table
 import yfinance as yf
 import plotly.graph_objects as go
 
@@ -18,7 +18,8 @@ app.layout = html.Div([
               placeholder='Search for symbols from Yahoo Finance',
               style={'width':'50%'}),
     html.Button(id='submit-button', children='Submit'),
-    dcc.Graph(id='stock-graph', figure=fig)
+    dcc.Graph(id='stock-graph', figure=fig),
+    dash_table.DataTable(id='stock-data', data=price.tail(10).to_dict('records'))
 ])
 
 if __name__=='__main__':
